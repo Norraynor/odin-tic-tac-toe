@@ -19,10 +19,13 @@ const gameboard = (function createGameboard() {
     function getBoard() {
         return board;
     }
+    function getCell(posX,posY) {
+        return board[posX][posY];
+    }
     function resetBoard() {
         return board = createBoard();
     }
-    return { markBoard, getBoard, resetBoard };
+    return { markBoard, getBoard, resetBoard, getCell };
 })();
 
 const playerOne = createPlayer("bob", "X");
@@ -32,12 +35,19 @@ function createPlayer(name, marker) {
 }
 
 
-//controler to manage game
+//controller to manage game
 const gameController = (function createController(board) {
     let round = 0;
+    let turn = false;
     function gameStatus() {        
         console.log(board.getBoard());
     }
+    function changeTurn() {
+        turn = !turn;
+        console.log('changing turn: ' + turn);
+    }
+
+    //to do: remove player - it should change based on current turn
     function playRound(posX, posY, player) {
         let boardCell = board.getBoard()[posX][posY];
         console.log(boardCell);
@@ -46,7 +56,54 @@ const gameController = (function createController(board) {
             round++;            
         }
         board.getBoard();
+        if (checkWin()) {
+            //end game
+            console.log('end game');
+        } else {
+            changeTurn();            
+        }
+
     }
+
+    //need to add null checking
+    const allEqual = (arr) => arr.every((v) => v === arr[0]);
+
+    function checkWin() {
+        let currentBoard = board.getBoard();
+        if (allEqual(currentBoard[0])) {
+            return true;
+        } 
+        if (allEqual(currentBoard[1])) {
+            return true;
+        } 
+        if (allEqual(currentBoard[2])) {
+            return true;
+        } 
+
+			// X o o
+			// o X o
+			// o o X
+
+			// o X o
+			// o X o
+			// o X o
+
+			// X o o
+			// X o o
+            // X o o
+        
+			// o o X
+			// o o X
+            // o o X
+        
+			// o o X
+			// o X o
+            // X o o
+        
+            
+        
+        return false;
+		}
     //control win conditions
     //manage gameboard
     return { gameStatus, playRound };
