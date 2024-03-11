@@ -14,7 +14,7 @@ const gameboard = (function createGameboard() {
     let board = createBoard();
     function markBoard(posX,posY,player) {
         console.log(board);
-        board[posX][posY] = player.marker;
+        board[posX][posY] = player;
     }
     function getBoard() {
         return board;
@@ -29,6 +29,7 @@ const gameboard = (function createGameboard() {
 })();
 
 const playerOne = createPlayer("bob", "X");
+const playerTwo = createPlayer("john", "O");
 function createPlayer(name, marker) {
     console.log(name + ': ' + marker)
     return { name, marker };
@@ -40,27 +41,33 @@ const gameController = (function createController(board) {
     let round = 0;
     let turn = false;
     let winner = null;
+    let players = [playerOne, playerTwo];
+    let currentPlayer = playerOne;
 
     function gameStatus() {        
         console.log(board.getBoard());
     }
     function changeTurn() {
-        turn = !turn;
-        console.log('changing turn: ' + turn);
+        if (currentPlayer === playerOne) {
+            currentPlayer = playerTwo;
+        } else {
+            currentPlayer = playerOne;
+        }
+        console.log('changing turn: ' + currentPlayer.name);
     }
 
     //to do: remove player - it should change based on current turn
-    function playRound(posX, posY, player) {
+    function playRound(posX, posY) {
         let boardCell = board.getBoard()[posX][posY];
         console.log(boardCell);
         if (boardCell === null) {
-            board.markBoard(posX, posY, player);
+            board.markBoard(posX, posY, currentPlayer);
             round++;            
         }
         board.getBoard();
         if (checkWin()) {
             //end game
-            console.log('end game');
+            console.log('end game. Winner: ' + winner.name);
         } else {
             changeTurn();            
         }
@@ -78,13 +85,16 @@ const gameController = (function createController(board) {
     function checkWin() {
 			let currentBoard = board.getBoard();
 			let checkValue = null;
-            if (allEqual(currentBoard[0])) {
+        if (allEqual(currentBoard[0])) {
+                winner = currentBoard[0][0]
 				return true;
 			}
 			if (allEqual(currentBoard[1])) {
+                winner = currentBoard[1][0];
 				return true;
 			}
 			if (allEqual(currentBoard[2])) {
+                winner = currentBoard[2][0];
 				return true;
 			}
 
@@ -99,6 +109,7 @@ const gameController = (function createController(board) {
                     currentBoard[1][1] === checkValue &&
                     currentBoard[2][2] === checkValue
                 ) {
+                    winner = currentBoard[0][0];
                     return true;
                 }
                 // X o o
@@ -110,6 +121,7 @@ const gameController = (function createController(board) {
                     currentBoard[1][0] === checkValue &&
                     currentBoard[2][0] === checkValue
                 ) {
+                    winner = currentBoard[0][0];
                     return true;
                 }
             }
@@ -123,6 +135,7 @@ const gameController = (function createController(board) {
                     currentBoard[1][1] === checkValue &&
                     currentBoard[2][1] === checkValue
                 ) {
+                    winner = currentBoard[0][1];
                     return true;
                 }
             }			
@@ -137,6 +150,7 @@ const gameController = (function createController(board) {
                     currentBoard[1][2] === checkValue &&
                     currentBoard[2][2] === checkValue
                 ) {
+                    winner = currentBoard[0][2];
                     return true;
                 }
                 // o o X
@@ -147,6 +161,7 @@ const gameController = (function createController(board) {
                     currentBoard[1][1] === checkValue &&
                     currentBoard[2][0] === checkValue
                 ) {
+                    winner = currentBoard[0][2];
                     return true;
                 }
             }	
