@@ -39,6 +39,8 @@ function createPlayer(name, marker) {
 const gameController = (function createController(board) {
     let round = 0;
     let turn = false;
+    let winner = null;
+
     function gameStatus() {        
         console.log(board.getBoard());
     }
@@ -66,43 +68,90 @@ const gameController = (function createController(board) {
     }
 
     //need to add null checking
-    const allEqual = (arr) => arr.every((v) => v === arr[0]);
+    const allEqual = (arr) => arr.every((v) => {
+        if (arr[0] !== null) {
+            return v === arr[0];
+        }
+        return false;
+    });
 
     function checkWin() {
-        let currentBoard = board.getBoard();
-        if (allEqual(currentBoard[0])) {
-            return true;
-        } 
-        if (allEqual(currentBoard[1])) {
-            return true;
-        } 
-        if (allEqual(currentBoard[2])) {
-            return true;
-        } 
+			let currentBoard = board.getBoard();
+			let checkValue = null;
+            if (allEqual(currentBoard[0])) {
+				return true;
+			}
+			if (allEqual(currentBoard[1])) {
+				return true;
+			}
+			if (allEqual(currentBoard[2])) {
+				return true;
+			}
 
-			// X o o
-			// o X o
-			// o o X
+			
+            checkValue = currentBoard[0][0];
+            if (checkValue !== null) {
+                // X o o
+                // o X o
+                // o o X
+                if (
+                    currentBoard[0][0] === checkValue &&
+                    currentBoard[1][1] === checkValue &&
+                    currentBoard[2][2] === checkValue
+                ) {
+                    return true;
+                }
+                // X o o
+                // X o o
+                // X o o
 
-			// o X o
-			// o X o
-			// o X o
+                if (
+                    currentBoard[0][0] === checkValue &&
+                    currentBoard[1][0] === checkValue &&
+                    currentBoard[2][0] === checkValue
+                ) {
+                    return true;
+                }
+            }
+            // o X o
+            // o X o
+            // o X o
+            checkValue = currentBoard[0][1];
+            if (checkValue !== null) {
+                if (
+                    currentBoard[0][1] === checkValue &&
+                    currentBoard[1][1] === checkValue &&
+                    currentBoard[2][1] === checkValue
+                ) {
+                    return true;
+                }
+            }			
 
-			// X o o
-			// X o o
-            // X o o
-        
-			// o o X
-			// o o X
-            // o o X
-        
-			// o o X
-			// o X o
-            // X o o
-        
-            
-        
-        return false;
+            checkValue = currentBoard[0][2];
+            if (checkValue !== null) {
+                // o o X
+                // o o X
+                // o o X
+                if (
+                    currentBoard[0][2] === checkValue &&
+                    currentBoard[1][2] === checkValue &&
+                    currentBoard[2][2] === checkValue
+                ) {
+                    return true;
+                }
+                // o o X
+                // o X o
+                // X o o
+                if (
+                    currentBoard[0][2] === checkValue &&
+                    currentBoard[1][1] === checkValue &&
+                    currentBoard[2][0] === checkValue
+                ) {
+                    return true;
+                }
+            }	
+			
+			return false;
 		}
     //control win conditions
     //manage gameboard
