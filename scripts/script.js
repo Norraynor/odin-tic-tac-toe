@@ -1,4 +1,18 @@
-
+const htmlGameboard = document.querySelector('.gameboard');
+const cellArray = htmlGameboard.querySelectorAll('.cell');
+console.log(cellArray);
+cellArray.forEach(cell => {
+    cell.addEventListener('click', (e) => {
+        currentCellValue = null;
+        if (e.target === cell) {
+            currentCellValue = e.target.children[0].textContent;            
+        } else {
+            currentCellValue = e.target.parentNode.children[0].textContent;
+        }
+        //if empty then play and set value else ignore
+        
+    })
+});
 
 const gameboard = (function createGameboard() {
     function createBoard(rows = 3, cols = 3) {
