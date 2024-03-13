@@ -56,7 +56,6 @@ const gameController = (function createController(board) {
         console.log('changing turn: ' + currentPlayer.name);
     }
 
-    //to do: remove player - it should change based on current turn
     function playRound(posX, posY) {
         let boardCell = board.getBoard()[posX][posY];
         console.log(boardCell);
