@@ -3,14 +3,23 @@ const cellArray = htmlGameboard.querySelectorAll('.cell');
 console.log(cellArray);
 cellArray.forEach(cell => {
     cell.addEventListener('click', (e) => {
-        currentCellValue = null;
+        let currentCellValue = null;
+        let element = null;
         if (e.target === cell) {
-            currentCellValue = e.target.children[0].textContent;            
+            element = e.target;
+            currentCellValue = element.children[0].textContent;            
         } else {
-            currentCellValue = e.target.parentNode.children[0].textContent;
+            element = e.target.parentNode;
+            currentCellValue = element.children[0].textContent;
         }
-        //if empty then play and set value else ignore
-        
+
+        if (currentCellValue !== '') {
+            return false;
+        } else {
+            //play round
+            let position = element.getAttribute("index");
+            gameController.playRound(position[0], position[1]);
+        }
     })
 });
 
@@ -186,8 +195,12 @@ const gameController = (function createController(board) {
     return { gameStatus, playRound };
 })(gameboard);
 
+const displayController = (function () {
+    
+})();
+
 //player > plays round > next turn > opponent > plays round
 
 //test
-gameboard.markBoard(1, 1, playerOne);
+//gameboard.markBoard(1, 1, playerOne);
 gameController.gameStatus();
