@@ -84,7 +84,8 @@ const gameController = (function createController(board) {
         console.log(boardCell);
         if (boardCell === null) {
             board.markBoard(posX, posY, currentPlayer);
-            round++;            
+            round++;  
+            displayController.updateDisplay(posX,posY);
         }
         board.getBoard();
         if (checkWin()) {
@@ -189,15 +190,29 @@ const gameController = (function createController(board) {
             }	
 			
 			return false;
-		}
+    }
+    
+    function getCurrentPlayer() {
+        return currentPlayer;
+    }
     //control win conditions
     //manage gameboard
-    return { gameStatus, playRound };
+    return { gameStatus, playRound, getCurrentPlayer };
 })(gameboard);
 
-const displayController = (function () {
-    
-})();
+const displayController = (function (board) {
+    function updateDisplay(posX, posY) {
+        let currentBoard = board.getBoard();
+        cellArray.forEach((cell, index) => {
+            position = cell.getAttribute('index');
+            if (position[0] == posX && position[1] == posY) {
+                console.log({ position });
+                cell.children[0].textContent = gameController.getCurrentPlayer().marker;
+            }
+        })
+    }
+    return { updateDisplay };
+})(gameboard);
 
 //player > plays round > next turn > opponent > plays round
 
