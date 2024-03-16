@@ -1,6 +1,8 @@
 const htmlGameboard = document.querySelector('.gameboard');
 const cellArray = htmlGameboard.querySelectorAll('.cell');
-console.log(cellArray);
+const winDiv = document.querySelector('.win-text');
+const winText = winDiv.querySelector('.text');
+
 cellArray.forEach(cell => {
     cell.addEventListener('click', (e) => {
         let currentCellValue = null;
@@ -81,20 +83,21 @@ const gameController = (function createController(board) {
 
     function playRound(posX, posY) {
         let boardCell = board.getBoard()[posX][posY];
-        console.log(boardCell);
-        if (boardCell === null) {
-            board.markBoard(posX, posY, currentPlayer);
-            round++;  
-            displayController.updateDisplay(posX,posY);
+        if (!checkWin()) {
+            if (boardCell === null) {
+                board.markBoard(posX, posY, currentPlayer);
+                round++;
+                displayController.updateDisplay(posX, posY);
+            }            
         }
-        board.getBoard();
         if (checkWin()) {
             //end game
-            console.log('end game. Winner: ' + winner.name);
+            displayController.updateWinText(true);
+            console.log("end game. Winner: " + winner.name);
         } else {
-            changeTurn();            
+            changeTurn();     
+            displayController.updateWinText(false);       
         }
-
     }
 
     //need to add null checking
@@ -195,9 +198,12 @@ const gameController = (function createController(board) {
     function getCurrentPlayer() {
         return currentPlayer;
     }
+    function getWinner() {
+        return winner;
+    }
     //control win conditions
     //manage gameboard
-    return { gameStatus, playRound, getCurrentPlayer };
+    return { gameStatus, playRound, getCurrentPlayer, getWinner };
 })(gameboard);
 
 const displayController = (function (board) {
@@ -211,7 +217,14 @@ const displayController = (function (board) {
             }
         })
     }
-    return { updateDisplay };
+    function updateWinText(win = false) {        
+        if (!win) {
+            winText.textContent = "Turn: " + gameController.getCurrentPlayer().name;            
+        } else {
+            winText.textContent = 'Winner: ' + gameController.getWinner().name;
+        }
+    }
+    return { updateDisplay, updateWinText };
 })(gameboard);
 
 //player > plays round > next turn > opponent > plays round
