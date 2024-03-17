@@ -50,8 +50,16 @@ const gameboard = (function createGameboard() {
     function resetBoard() {
         return board = createBoard();
     }
-    return { markBoard, getBoard, resetBoard, getCell };
+    function boardFull() {
+        let anyNull = board.filter(arr => arr.filter(cell => cell === null).length).length;
+        if (anyNull === 0) {
+            return true;
+        } 
+        return false;
+    }
+    return { markBoard, getBoard, resetBoard, getCell, boardFull };
 })();
+
 
 const playerOne = createPlayer("bob", "X");
 const playerTwo = createPlayer("john", "O");
@@ -95,8 +103,12 @@ const gameController = (function createController(board) {
             displayController.updateWinText(true);
             console.log("end game. Winner: " + winner.name);
         } else {
-            changeTurn();     
-            displayController.updateWinText(false);       
+            if (!gameboard.boardFull()) {
+                changeTurn();
+                displayController.updateWinText(false);                    
+            } else {                
+                displayController.updateWinText(false,true);    
+            }
         }
     }
 
@@ -217,11 +229,15 @@ const displayController = (function (board) {
             }
         })
     }
-    function updateWinText(win = false) {        
-        if (!win) {
-            winText.textContent = "Turn: " + gameController.getCurrentPlayer().name;            
+    function updateWinText(win = false, draw = false) {        
+        if (!draw) {
+            if (!win) {
+                winText.textContent = "Turn: " + gameController.getCurrentPlayer().name;
+            } else {
+                winText.textContent = "Winner: " + gameController.getWinner().name;
+            }            
         } else {
-            winText.textContent = 'Winner: ' + gameController.getWinner().name;
+            winText.textContent = 'Its a draw';
         }
     }
     return { updateDisplay, updateWinText };
