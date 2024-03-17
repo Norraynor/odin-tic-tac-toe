@@ -2,6 +2,8 @@ const htmlGameboard = document.querySelector('.gameboard');
 const cellArray = htmlGameboard.querySelectorAll('.cell');
 const winDiv = document.querySelector('.win-text');
 const winText = winDiv.querySelector('.text');
+const startButton = document.querySelector('.start-button');
+const resetButton = document.querySelector('.reset-button');
 
 cellArray.forEach(cell => {
     cell.addEventListener('click', (e) => {
@@ -24,6 +26,18 @@ cellArray.forEach(cell => {
         }
     })
 });
+
+
+//add logic for game status(is it on going or not?) if not then start button should allow to start if players input data and if its on going then reset button should reset board
+    
+
+startButton.addEventListener('click', (e) => {
+})
+
+resetButton.addEventListener('click', (e) => {
+    gameboard.resetBoard();
+    //add display reset too
+})
 
 const gameboard = (function createGameboard() {
     function createBoard(rows = 3, cols = 3) {
@@ -63,6 +77,7 @@ const gameboard = (function createGameboard() {
 
 const playerOne = createPlayer("bob", "X");
 const playerTwo = createPlayer("john", "O");
+
 function createPlayer(name, marker) {
     console.log(name + ': ' + marker)
     return { name, marker };
@@ -72,9 +87,8 @@ function createPlayer(name, marker) {
 //controller to manage game
 const gameController = (function createController(board) {
     let round = 0;
-    let turn = false;
+    let onGoing = false;
     let winner = null;
-    let players = [playerOne, playerTwo];
     let currentPlayer = playerOne;
 
     function gameStatus() {        
