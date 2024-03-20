@@ -32,11 +32,15 @@ cellArray.forEach(cell => {
     
 
 startButton.addEventListener('click', (e) => {
+    console.log('start clicked');
+    //if no names then no game
+    //after both names submited then create players and start is possible
+    //if game in progress then start should do nothing
 })
 
 resetButton.addEventListener('click', (e) => {
     gameboard.resetBoard();
-    //add display reset too
+    displayController.updateDisplay();
 })
 
 const gameboard = (function createGameboard() {
@@ -233,14 +237,20 @@ const gameController = (function createController(board) {
 })(gameboard);
 
 const displayController = (function (board) {
-    function updateDisplay(posX, posY) {
+    function updateDisplay(posX=-1, posY=0) {
         let currentBoard = board.getBoard();
         cellArray.forEach((cell, index) => {
-            position = cell.getAttribute('index');
-            if (position[0] == posX && position[1] == posY) {
-                console.log({ position });
-                cell.children[0].textContent = gameController.getCurrentPlayer().marker;
+            if (posX !==-1) {
+                position = cell.getAttribute("index");
+                if (position[0] == posX && position[1] == posY) {
+                    console.log({ position });
+                    cell.children[0].textContent =
+                        gameController.getCurrentPlayer().marker;
+                }
+            } else {
+                cell.children[0].textContent = null;
             }
+            
         })
     }
     function updateWinText(win = false, draw = false) {        
