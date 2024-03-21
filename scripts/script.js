@@ -4,7 +4,16 @@ const winDiv = document.querySelector('.win-text');
 const winText = winDiv.querySelector('.text');
 const startButton = document.querySelector('.start-button');
 const resetButton = document.querySelector('.reset-button');
-
+const playerOneInput = document.querySelector('#player-one');
+const playerTwoInput = document.querySelector('#player-two');
+let playerOne = '';
+let playerTwo = '';
+playerOneInput.addEventListener('change', (e) => {
+    playerOne = gameController.setPlayer(e.target.value,'X');
+})
+playerTwoInput.addEventListener("change", (e) => {
+	playerTwo = gameController.setPlayer(e.target.value, "O");
+});
 cellArray.forEach(cell => {
     cell.addEventListener('click', (e) => {
         let currentCellValue = null;
@@ -32,7 +41,13 @@ cellArray.forEach(cell => {
     
 
 startButton.addEventListener('click', (e) => {
-    console.log('start clicked');
+    console.log({playerOne,playerTwo})
+    if (playerOne !== '' && playerTwo !== '') {
+			//start game
+			gameController.startGame();
+            gameController.setCurrentPlayer(playerOne);
+			console.log("game started");
+    }
     //if no names then no game
     //after both names submited then create players and start is possible
     //if game in progress then start should do nothing
@@ -79,8 +94,8 @@ const gameboard = (function createGameboard() {
 })();
 
 
-const playerOne = createPlayer("bob", "X");
-const playerTwo = createPlayer("john", "O");
+//const playerOne = createPlayer("bob", "X");
+//const playerTwo = createPlayer("john", "O");
 
 function createPlayer(name, marker) {
     console.log(name + ': ' + marker)
@@ -93,8 +108,11 @@ const gameController = (function createController(board) {
     let round = 0;
     let onGoing = false;
     let winner = null;
-    let currentPlayer = playerOne;
+    let currentPlayer = '';
 
+    function setCurrentPlayer(player) {
+        currentPlayer = player;
+    }
     function gameStatus() {        
         console.log(board.getBoard());
     }
@@ -109,25 +127,28 @@ const gameController = (function createController(board) {
 
     function playRound(posX, posY) {
         let boardCell = board.getBoard()[posX][posY];
-        if (!checkWin()) {
-            if (boardCell === null) {
-                board.markBoard(posX, posY, currentPlayer);
-                round++;
-                displayController.updateDisplay(posX, posY);
-            }            
+        if (onGoing) {
+            if (!checkWin()) {
+                if (boardCell === null) {
+                    board.markBoard(posX, posY, currentPlayer);
+                    round++;
+                    displayController.updateDisplay(posX, posY);
+                }
+                }
+                if (checkWin()) {
+                    //end game
+                    displayController.updateWinText(true);
+                    console.log("end game. Winner: " + winner.name);
+                } else {
+                    if (!gameboard.boardFull()) {
+                        changeTurn();
+                        displayController.updateWinText(false);
+                    } else {
+                        displayController.updateWinText(false, true);
+                    }
+                }
         }
-        if (checkWin()) {
-            //end game
-            displayController.updateWinText(true);
-            console.log("end game. Winner: " + winner.name);
-        } else {
-            if (!gameboard.boardFull()) {
-                changeTurn();
-                displayController.updateWinText(false);                    
-            } else {                
-                displayController.updateWinText(false,true);    
-            }
-        }
+        
     }
 
     //need to add null checking
@@ -228,12 +249,18 @@ const gameController = (function createController(board) {
     function getCurrentPlayer() {
         return currentPlayer;
     }
+    function setPlayer(name,marker) {
+        return createPlayer(name, marker);
+    }
     function getWinner() {
         return winner;
     }
+    function startGame() {
+        onGoing = true;
+    }
     //control win conditions
     //manage gameboard
-    return { gameStatus, playRound, getCurrentPlayer, getWinner };
+    return { gameStatus, playRound, getCurrentPlayer, getWinner, setPlayer, startGame, setCurrentPlayer };
 })(gameboard);
 
 const displayController = (function (board) {
